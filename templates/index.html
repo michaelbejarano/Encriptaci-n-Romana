@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cifrado Romano</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@600&display=swap");
+
+    :root {
+      --green: #b2fc00;
+      --blue: #9f8dfe;
+      --red: #fe6f71;
+      --gray: #e4e4e4;
+      --black: #111111;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Darker Grotesque", sans-serif;
+      letter-spacing: 1px;
+      background: var(--gray);
+    }
+
+    body {
+      padding: 2rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .background {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.75;
+      background: var(--gray);
+    }
+
+    .background::before,
+    .background::after {
+      content: "";
+      position: absolute;
+      width: 160vw;
+      height: 160vw;
+      border-radius: 50%;
+      filter: blur(20px);
+    }
+
+    .background::before {
+      right: -90vw;
+      top: -90vw;
+      background: radial-gradient(var(--blue), transparent 70%);
+    }
+
+    .background::after {
+      left: -90vw;
+      bottom: -90vw;
+      background: radial-gradient(var(--red), transparent 70%);
+    }
+
+    .frame {
+      min-height: calc(100vh - 4rem);
+      border: 4px solid var(--black);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1150px;
+    }
+
+    .title-box {
+      border: 4px solid var(--black);
+      background: var(--white);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 10px 10px 0 var(--black);
+    }
+
+    .title-box h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .title-box p {
+      margin: 0.7rem 0 0;
+      font-size: 1.2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .card {
+      border: 4px solid var(--black);
+      background: var(--white);
+      padding: 1.25rem;
+      box-shadow: 10px 10px 0 var(--black);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.6rem;
+      text-transform: uppercase;
+    }
+
+    label {
+      display: block;
+      margin: 1rem 0 0.4rem;
+      font-size: 1rem;
+      font-family: "Martian Mono", monospace;
+      text-transform: uppercase;
+    }
+
+    textarea,
+    input[type="number"] {
+      width: 100%;
+      border: 4px solid var(--black);
+      background: #fff;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-family: "Darker Grotesque", sans-serif;
+      outline: none;
+      resize: vertical;
+    }
+
+    textarea {
+      min-height: 150px;
+    }
+
+    .btn {
+      width: 100%;
+      border: 4px solid var(--black);
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-family: "Martian Mono", monospace;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 6px 6px 0 var(--black);
+    }
+
+    .btn-cifrar {
+      background: var(--blue);
+      color: var(--black);
+    }
+
+    .btn-fuerza {
+      background: var(--green);
+      color: var(--black);
+    }
+
+    .resultado-box {
+      margin-top: 1.2rem;
+      border: 4px solid var(--black);
+      background: #f7f7f7;
+      padding: 1rem;
+    }
+
+    .resultado-box h3 {
+      margin: 0 0 0.6rem;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      font-family: "Martian Mono", monospace;
+    }
+
+    .resultado-texto {
+      font-size: 1.2rem;
+      word-break: break-word;
+    }
+
+    .lista {
+      margin-top: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.3rem;
+    }
+
+    .item {
+      border: 3px solid var(--black);
+      background: #fafafa;
+      padding: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .item strong {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-family: "Martian Mono", monospace;
+      font-size: 0.95rem;
+    }
+
+    .footer-note {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .frame {
+        padding: 1rem;
+      }
+
+      body {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background"></div>
+
+  <div class="frame">
+    <div class="app">
+
+      <div class="title-box">
+        <h1>Cifrado Romano</h1>
+        <p>Cifra frases con el método César y prueba todas las combinaciones posibles.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>Cifrar texto</h2>
+          <form method="POST">
+            <input type="hidden" name="accion" value="cifrar">
+
+            <label for="texto-cifrar">Texto</label>
+            <textarea id="texto-cifrar" name="texto" placeholder="Escribe tu frase aquí...">{{ texto }}</textarea>
+
+            <label for="giro">Número de giros</label>
+            <input type="number" id="giro" name="giro" placeholder="Ejemplo: 3" value="{{ giro }}">
+
+            <button type="submit" class="btn btn-cifrar">Cifrar ahora</button>
+          </form>
+
+          {% if texto_cifrado %}
+          <div class="resultado-box">
+            <h3>Texto cifrado</h3>
+            <div class="resultado-texto">{{ texto_cifrado }}</div>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="card">
+          <h2>Probar combinaciones</h2>
+          <form method="POST">
+            <input type="hidden" name="accion" value="fuerza_bruta">
+
+            <label for="texto-fuerza">Texto cifrado</label>
+            <textarea id="texto-fuerza" name="texto" placeholder="Pega aquí el texto cifrado...">{{ texto }}</textarea>
+
+            <button type="submit" class="btn btn-fuerza">Mostrar combinaciones</button>
+          </form>
+
+          {% if resultados_fuerza_bruta %}
+          <div class="lista">
+            {% for resultado in resultados_fuerza_bruta %}
+            <div class="item">
+              <strong>Giro {{ resultado.giro }}</strong>
+              <div>{{ resultado.texto }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Proyecto simple en Flask + Python usando el cifrado César.
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
